@@ -8,6 +8,10 @@ document.getElementById('twitchButton').addEventListener('click', function() {
   window.location.href = twitchAuthUrl;
 });
 
+document.getElementById('nextPageButton').addEventListener('click', function() {
+  window.location.href = 'nextpage.html'; // Ersetzt durch die URL der nächsten Seite
+});
+
 // Listen for the redirect from Twitch after authentication
 window.addEventListener('load', function() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -18,9 +22,9 @@ window.addEventListener('load', function() {
     // Here, you can send the code to your server to exchange for an access token
 
     // After processing, redirect to the next HTML page
-    window.location.href = 'next.html'; // Replace with your next page URL
-  } else {
+    window.location.href = 'nextpage.html'; // Replace with your next page URL
+  } else if (window.location.href.includes('redirect_uri')) {
     // Redirect to the next page even if there's no code (authentication failed or cancelled)
-    window.location.href = 'next.html'; // Replace with your next page URL
+    window.location.href = 'nextpage.html'; // Replace with your next page URL
   }
 });
