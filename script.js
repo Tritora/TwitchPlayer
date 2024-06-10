@@ -18,9 +18,9 @@ window.addEventListener('load', function() {
     // Here, you can send the code to your server to exchange for an access token
 
     // After processing, redirect to the next HTML page
-    window.location.href = 'nextpage.html'; // Replace with your next page URL
+    window.location.href = 'next.html'; // Replace with your next page URL
   } else {
     // Redirect to the next page even if there's no code (authentication failed or cancelled)
-    window.location.href = 'nextpage.html'; // Replace with your next page URL
+    window.location.href = 'next.html'; // Replace with your next page URL
   }
 });
