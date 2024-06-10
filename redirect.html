@@ -7,12 +7,13 @@
 </head>
 <body>
   <script>
+    // Hole den Authorization Code aus der URL
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
 
     if (code) {
       const clientId = '6oibtqptiouosp60jt4cub73tq3b5c';
-      const clientSecret = 'g38bh2zo1obbocaif50crzx5z9qup6'; // Sicherer wäre es, dies serverseitig zu tun
+      const clientSecret = 'YOUR_CLIENT_SECRET'; // Sicherer wäre es, dies serverseitig zu tun
       const redirectUri = 'https://tritora.github.io/TwitchPlayer/';
       const tokenUrl = `https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&code=${code}&grant_type=authorization_code&redirect_uri=${redirectUri}`;
 
@@ -32,6 +33,7 @@
         const accessToken = data.access_token;
         console.log('Access Token:', accessToken);
 
+        // Hole Benutzerinformationen von der Twitch API
         return fetch('https://api.twitch.tv/helix/users', {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -49,6 +51,8 @@
         console.log('User Info:', userInfo);
         const user = userInfo.data[0];
         alert(`Willkommen, ${user.display_name}!`);
+        
+        // Weiterleiten zur nächsten Seite
         window.location.href = 'next.html';
       })
       .catch(error => {
