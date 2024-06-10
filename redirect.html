@@ -12,22 +12,39 @@
     const code = params.get('code');
 
     if (code) {
-      // Sende den Authorization Code an deinen Server
-      fetch('https://yourserver.com/get-twitch-token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ code: code })
+      const clientId = '6oibtqptiouosp60jt4cub73tq3b5c';
+      const clientSecret = 'YOUR_CLIENT_SECRET'; // Achtung: Client-Secret sollte niemals clientseitig verwendet werden. Dies ist nur zur Veranschaulichung.
+
+      const redirectUri = 'https://tritora.github.io/TwitchPlayer/';
+      const tokenUrl = `https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&code=${code}&grant_type=authorization_code&redirect_uri=${redirectUri}`;
+
+      fetch(tokenUrl, {
+        method: 'POST'
       })
       .then(response => response.json())
       .then(data => {
-        console.log('Access Token:', data.access_token);
+        const accessToken = data.access_token;
+        console.log('Access Token:', accessToken);
+
+        // Hole Benutzerinformationen von der Twitch API
+        return fetch('https://api.twitch.tv/helix/users', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Client-Id': clientId
+          }
+        });
+      })
+      .then(response => response.json())
+      .then(userInfo => {
+        console.log('User Info:', userInfo);
+        const user = userInfo.data[0];
+        alert(`Willkommen, ${user.display_name}!`);
+        
         // Weiterleiten zur nächsten Seite
         window.location.href = 'next.html';
       })
       .catch(error => {
-        console.error('Fehler beim Abrufen des Access Tokens:', error);
+        console.error('Fehler beim Abrufen des Access Tokens oder Benutzerinformationen:', error);
       });
     } else {
       console.error('Authorization Code nicht gefunden');
