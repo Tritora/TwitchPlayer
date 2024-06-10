@@ -4,7 +4,7 @@ const app = express();
 app.use(express.json());
 
 const CLIENT_ID = '6oibtqptiouosp60jt4cub73tq3b5c';
-const CLIENT_SECRET = 'YOUR_CLIENT_SECRET'; // Ersetze durch deinen Twitch-Client-Secret
+const CLIENT_SECRET = 'g38bh2zo1obbocaif50crzx5z9qup6'; // Ersetze durch deinen Twitch-Client-Secret
 const REDIRECT_URI = 'https://tritora.github.io/TwitchPlayer/';
 
 async function getAccessToken(code) {
