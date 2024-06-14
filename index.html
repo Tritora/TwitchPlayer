@@ -18,6 +18,7 @@
             padding: 10px;
             box-sizing: border-box;
             overflow-y: auto;
+            flex-shrink: 0; /* Sidebar wird nicht verkleinert */
         }
         .sidebar a {
             display: block;
@@ -35,20 +36,16 @@
             display: flex;
             flex-grow: 1;
             position: relative; /* Hinzugefügt, um die Sidebar und den Player/Chat im Container zu positionieren */
+            margin-left: 200px; /* Platz für die Sidebar */
         }
         .player, .chat {
             flex: 1;
-            position: absolute; /* Absolute Positionierung für den Player und Chat innerhalb des Containers */
-            top: 0;
-            bottom: 0;
-        }
-        .player {
-            left: 200px; /* Platz für die Sidebar */
-            right: 350px; /* Platz für den Chat */
+            position: relative; /* Relative Positionierung für den Player und Chat */
         }
         .chat {
-            right: 0;
             width: 350px;
+            flex-shrink: 0; /* Chat wird nicht verkleinert */
+            margin-left: 10px; /* Abstand zwischen Player und Chat */
         }
         .player iframe, .chat iframe {
             width: 100%;
