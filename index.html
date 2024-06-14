@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -103,6 +103,7 @@
                     }
                 });
                 const data = await response.json();
+                console.log('Stream Status Response:', data); // Debug: Konsolenausgabe der API-Antwort
                 return data.data.length > 0; // True, wenn der Kanal live ist, sonst False
             } catch (error) {
                 console.error('Fehler beim Überprüfen des Stream-Status:', error);
