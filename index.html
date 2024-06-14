@@ -42,29 +42,64 @@
 <body>
     <div class="container">
         <div class="player">
-            <iframe
-                src="https://player.twitch.tv/?channel=bps1016&parent=tritora.github.io&muted=true"
-                allowfullscreen>
+            <iframe id="twitch-player-embed"
+                    src=""
+                    allowfullscreen>
             </iframe>
         </div>
         <div class="chat">
             <iframe id="twitch-chat-embed"
-                    src="https://www.twitch.tv/embed/bps1016/chat?parent=tritora.github.io">
+                    src=""
+                    allowfullscreen>
             </iframe>
         </div>
     </div>
 
     <script>
-        // Hier kannst du den Kanal dynamisch aus einer Datei laden oder festlegen
-        const channelName = "bps1016"; // Hier Beispielhaft festgelegt
+        // Funktion zum Laden der Twitch-Channel-URLs aus der Textdatei
+        async function loadChannelUrls() {
+            try {
+                const response = await fetch('streams.txt'); // Annahme: Datei befindet sich im selben Verzeichnis
+                const text = await response.text();
+                const urls = text.trim().split('\n');
+                return urls.map(url => url.trim());
+            } catch (error) {
+                console.error('Error loading channel URLs:', error);
+                return [];
+            }
+        }
 
-        // Update des Player Iframe src Attributs mit dem dynamisch geladenen Kanal
-        const playerIframe = document.querySelector('.player iframe');
-        playerIframe.src = `https://player.twitch.tv/?channel=${channelName}&parent=tritora.github.io&muted=true`;
+        // Funktion zum Setzen der Player- und Chat-IFrame-Quellen basierend auf der Kanal-URL
+        async function setTwitchEmbeds() {
+            try {
+                const urls = await loadChannelUrls();
+                if (urls.length > 0) {
+                    const playerIframe = document.getElementById('twitch-player-embed');
+                    const chatIframe = document.getElementById('twitch-chat-embed');
+                    
+                    // Setze die erste URL als Standard, du kannst hier je nach Bedarf anpassen
+                    const defaultUrl = urls[0];
+                    
+                    // Setze die URLs für den Player und den Chat
+                    playerIframe.src = `https://player.twitch.tv/?channel=${extractChannelName(defaultUrl)}&parent=tritora.github.io&muted=true`;
+                    chatIframe.src = `https://www.twitch.tv/embed/${extractChannelName(defaultUrl)}/chat?parent=tritora.github.io`;
+                } else {
+                    console.warn('Keine Kanal-URLs gefunden.');
+                }
+            } catch (error) {
+                console.error('Fehler beim Setzen der Twitch-Embeds:', error);
+            }
+        }
 
-        // Optional: Update des Chat Iframe src Attributs basierend auf dem Kanal
-        const chatIframe = document.getElementById('twitch-chat-embed');
-        chatIframe.src = `https://www.twitch.tv/embed/${channelName}/chat?parent=tritora.github.io`;
+        // Funktion zum Extrahieren des Kanalnamens aus der URL
+        function extractChannelName(url) {
+            const regex = /https:\/\/www.twitch.tv\/(.*)/;
+            const match = url.match(regex);
+            return match ? match[1] : '';
+        }
+
+        // Lade die Twitch-Embeds beim Laden der Seite
+        setTwitchEmbeds();
     </script>
 </body>
 </html>
