@@ -19,6 +19,7 @@
             box-sizing: border-box;
             overflow-y: auto;
             flex-shrink: 0; /* Sidebar wird nicht verkleinert */
+            height: 100vh; /* Füllt die gesamte Höhe des Viewports aus */
         }
         .sidebar a {
             display: block;
@@ -36,25 +37,25 @@
             display: flex;
             flex-grow: 1;
             position: relative; /* Hinzugefügt, um die Sidebar und den Player/Chat im Container zu positionieren */
-            margin-left: 200px; /* Platz für die Sidebar */
         }
         .player {
-            flex: 1;
+            flex: 1; /* Füllt den verfügbaren Platz aus */
             position: relative; /* Relative Positionierung für den Player */
         }
         .player iframe {
             width: 100%;
-            height: calc(100vh - 20px); /* Anpassung der Höhe des Players */
+            height: 100%;
             border: none;
         }
         .chat {
             width: 350px;
             flex-shrink: 0; /* Chat wird nicht verkleinert */
+            height: 100vh; /* Füllt die gesamte Höhe des Viewports aus */
             margin-left: 10px; /* Abstand zwischen Player und Chat */
         }
         .chat iframe {
             width: 100%;
-            height: calc(100vh - 20px); /* Anpassung der Höhe des Chats */
+            height: 100%;
             border: none;
         }
     </style>
