@@ -81,27 +81,27 @@
     </div>
 
     <script>
-        // Funktion zum Laden der Twitch-Channel-URLs aus der Textdatei
-        async function loadChannelUrls() {
-            try {
-                const response = await fetch('streams.txt'); // Annahme: Datei befindet sich im selben Verzeichnis
-                const text = await response.text();
-                const urls = text.trim().split('\n');
-                return urls.map(url => url.trim());
-            } catch (error) {
-                console.error('Error loading channel URLs:', error);
-                return [];
-            }
-        }
+   // Funktion zum Laden der Twitch-Channel-URLs aus der Textdatei
+async function loadChannelUrls() {
+    try {
+        const response = await fetch('streams.txt'); // Annahme: Datei befindet sich im selben Verzeichnis
+        const text = await response.text();
+        const urls = text.trim().split('\n');
+        return urls.map(url => url.trim());
+    } catch (error) {
+        console.error('Fehler beim Laden der Kanal-URLs:', error);
+        return [];
+    }
+}
 
-        // Funktion zum Abrufen des Stream-Status eines Kanals
-        async function checkStreamStatus(channelName) {
+// Funktion zum Abrufen des Stream-Status eines Kanals
+async function checkStreamStatus(channelName) {
     try {
         const response = await fetch(`https://api.twitch.tv/helix/streams?user_login=${channelName}`, {
-    headers: {
-        'Client-ID': '6oibtqptiouosp60jt4cub73tq3b5c
-    }
-});
+            headers: {
+                'Client-ID': '6oibtqptiouosp60jt4cub73tq3b5c' // Hier Ihre Twitch Client-ID eintragen
+            }
+        });
         const data = await response.json();
         console.log('Stream Status Response:', data); // Debug: Konsolenausgabe der API-Antwort
         return data.data.length > 0; // True, wenn der Kanal live ist, sonst False
@@ -111,63 +111,54 @@
     }
 }
 
-        // Funktion zum Erstellen der Links in der Sidebar für live Kanäle
-        async function createSidebarLinksForLiveChannels() {
-            try {
-                const urls = await loadChannelUrls();
-                const sidebar = document.getElementById('sidebar');
+// Funktion zum Erstellen der Links in der Sidebar für live Kanäle
+async function createSidebarLinksForLiveChannels() {
+    try {
+        const urls = await loadChannelUrls();
+        const sidebar = document.getElementById('sidebar');
 
-                // Durchlaufe alle URLs und überprüfe den Stream-Status
-                for (const url of urls) {
-                    const channelName = extractChannelName(url);
-                    const isLive = await checkStreamStatus(channelName);
+        // Durchlaufe alle URLs und überprüfe den Stream-Status
+        for (const url of urls) {
+            const channelName = extractChannelName(url);
+            const isLive = await checkStreamStatus(channelName);
 
-                    if (isLive) {
-                        const link = document.createElement('a');
-                        link.textContent = channelName;
-                        link.href = '#';
-                        link.addEventListener('click', (event) => {
-                            event.preventDefault(); // Verhindert das Springen zur Ankerposition
-                            updateTwitchEmbeds(channelName);
-                        });
-                        sidebar.appendChild(link);
-                    }
-                }
-
-                // Wähle den ersten live Kanal aus, falls vorhanden
-                const firstLiveChannel = urls.find(url => {
-                    const channelName = extractChannelName(url);
-                    return checkStreamStatus(channelName);
+            if (isLive) {
+                const link = document.createElement('a');
+                link.textContent = channelName;
+                link.href = '#';
+                link.addEventListener('click', (event) => {
+                    event.preventDefault(); // Verhindert das Springen zur Ankerposition
+                    updateTwitchEmbeds(channelName);
                 });
-
-                if (firstLiveChannel) {
-                    updateTwitchEmbeds(extractChannelName(firstLiveChannel));
-                }
-
-            } catch (error) {
-                console.error('Fehler beim Erstellen der Sidebar-Links für live Kanäle:', error);
+                sidebar.appendChild(link);
             }
         }
 
-        // Funktion zum Setzen der Player- und Chat-IFrame-Quellen basierend auf dem Kanalnamen
-        function updateTwitchEmbeds(channelName) {
-            const playerIframe = document.getElementById('twitch-player-embed');
-            const chatIframe = document.getElementById('twitch-chat-embed');
-            
-            // Setze die URLs für den Player und den Chat
-            playerIframe.src = `https://player.twitch.tv/?channel=${channelName}&parent=tritora.github.io&muted=true`;
-            chatIframe.src = `https://www.twitch.tv/embed/${channelName}/chat?parent=tritora.github.io`;
-        }
+    } catch (error) {
+        console.error('Fehler beim Erstellen der Sidebar-Links für live Kanäle:', error);
+    }
+}
 
-        // Funktion zum Extrahieren des Kanalnamens aus der URL
-        function extractChannelName(url) {
-            const regex = /https:\/\/www.twitch.tv\/(.*)/;
-            const match = url.match(regex);
-            return match ? match[1] : '';
-        }
+// Funktion zum Setzen der Player- und Chat-IFrame-Quellen basierend auf dem Kanalnamen
+function updateTwitchEmbeds(channelName) {
+    const playerIframe = document.getElementById('twitch-player-embed');
+    const chatIframe = document.getElementById('twitch-chat-embed');
+    
+    // Setze die URLs für den Player und den Chat
+    playerIframe.src = `https://player.twitch.tv/?channel=${channelName}&parent=tritora.github.io&muted=true`;
+    chatIframe.src = `https://www.twitch.tv/embed/${channelName}/chat?parent=tritora.github.io`;
+}
 
-        // Lade die Sidebar-Links für live Kanäle und Twitch-Embeds beim Laden der Seite
-        createSidebarLinksForLiveChannels();
+// Funktion zum Extrahieren des Kanalnamens aus der URL
+function extractChannelName(url) {
+    const regex = /https:\/\/www.twitch.tv\/(.*)/;
+    const match = url.match(regex);
+    return match ? match[1] : '';
+}
+
+// Lade die Sidebar-Links für live Kanäle und Twitch-Embeds beim Laden der Seite
+createSidebarLinksForLiveChannels();
+
     </script>
 </body>
 </html>
