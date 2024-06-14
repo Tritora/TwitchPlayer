@@ -38,18 +38,23 @@
             position: relative; /* Hinzugefügt, um die Sidebar und den Player/Chat im Container zu positionieren */
             margin-left: 200px; /* Platz für die Sidebar */
         }
-        .player, .chat {
+        .player {
             flex: 1;
-            position: relative; /* Relative Positionierung für den Player und Chat */
+            position: relative; /* Relative Positionierung für den Player */
+        }
+        .player iframe {
+            width: 100%;
+            height: calc(100vh - 20px); /* Anpassung der Höhe des Players */
+            border: none;
         }
         .chat {
             width: 350px;
             flex-shrink: 0; /* Chat wird nicht verkleinert */
             margin-left: 10px; /* Abstand zwischen Player und Chat */
         }
-        .player iframe, .chat iframe {
+        .chat iframe {
             width: 100%;
-            height: 100%;
+            height: calc(100vh - 20px); /* Anpassung der Höhe des Chats */
             border: none;
         }
     </style>
