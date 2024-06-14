@@ -3,36 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Chat Embed</title>
+    <title>Twitch Embed</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: flex-start; /* Ensure the chat is on the left */
-            align-items: flex-start; /* Ensure the chat is at the top */
             height: 100vh;
             overflow: hidden;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
         }
         .chat {
             width: 350px; /* Fix the width of the chat */
             height: 500px; /* Fix the height of the chat */
-            display: flex;
-            flex-direction: column;
         }
         .chat iframe {
+            width: 100%;
+            height: 100%;
+        }
+        .player {
+            flex-grow: 1;
+            position: relative;
+        }
+        .player iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
         }
     </style>
 </head>
 <body>
-    <div class="chat">
-        <iframe id="twitch-chat-embed"
-                src="https://www.twitch.tv/embed/bps1016/chat?parent=tritora.github.io"
-                width="350"
-                height="500">
-        </iframe>
+    <div class="container">
+        <div class="chat">
+            <iframe id="twitch-chat-embed"
+                    src="https://www.twitch.tv/embed/bps1016/chat?parent=tritora.github.io">
+            </iframe>
+        </div>
+        <div class="player">
+            <iframe
+                src="https://player.twitch.tv/?channel=bps1016&parent=tritora.github.io&muted=true"
+                allowfullscreen>
+            </iframe>
+        </div>
     </div>
 </body>
 </html>
