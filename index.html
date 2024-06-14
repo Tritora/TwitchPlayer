@@ -94,32 +94,58 @@
             }
         }
 
-        // Funktion zum Erstellen der Links in der Sidebar
-        async function createSidebarLinks() {
+        // Funktion zum Abrufen des Stream-Status eines Kanals
+        async function checkStreamStatus(channelName) {
+            try {
+                const response = await fetch(`https://api.twitch.tv/helix/streams?user_login=${channelName}`, {
+                    headers: {
+                        'Client-ID': 'YOUR_TWITCH_CLIENT_ID', // Hier sollte dein Twitch Client-ID eingetragen werden
+                        'Authorization': 'Bearer YOUR_TWITCH_ACCESS_TOKEN' // Hier sollte dein Twitch Access Token eingetragen werden
+                    }
+                });
+                const data = await response.json();
+                return data.data.length > 0; // True, wenn der Kanal live ist, sonst False
+            } catch (error) {
+                console.error('Error checking stream status:', error);
+                return false;
+            }
+        }
+
+        // Funktion zum Erstellen der Links in der Sidebar für live Kanäle
+        async function createSidebarLinksForLiveChannels() {
             try {
                 const urls = await loadChannelUrls();
                 const sidebar = document.getElementById('sidebar');
 
-                // Erstelle für jeden Kanal einen Link in der Sidebar
-                urls.forEach(url => {
+                // Durchlaufe alle URLs und überprüfe den Stream-Status
+                for (const url of urls) {
                     const channelName = extractChannelName(url);
-                    const link = document.createElement('a');
-                    link.textContent = channelName;
-                    link.href = '#';
-                    link.addEventListener('click', (event) => {
-                        event.preventDefault(); // Verhindert das Springen zur Ankerposition
-                        updateTwitchEmbeds(channelName);
-                    });
-                    sidebar.appendChild(link);
+                    const isLive = await checkStreamStatus(channelName);
+
+                    if (isLive) {
+                        const link = document.createElement('a');
+                        link.textContent = channelName;
+                        link.href = '#';
+                        link.addEventListener('click', (event) => {
+                            event.preventDefault(); // Verhindert das Springen zur Ankerposition
+                            updateTwitchEmbeds(channelName);
+                        });
+                        sidebar.appendChild(link);
+                    }
+                }
+
+                // Wähle den ersten live Kanal aus, falls vorhanden
+                const firstLiveChannel = urls.find(url => {
+                    const channelName = extractChannelName(url);
+                    return checkStreamStatus(channelName);
                 });
 
-                // Setze die erste URL als Standard, du kannst hier je nach Bedarf anpassen
-                if (urls.length > 0) {
-                    updateTwitchEmbeds(extractChannelName(urls[0]));
+                if (firstLiveChannel) {
+                    updateTwitchEmbeds(extractChannelName(firstLiveChannel));
                 }
 
             } catch (error) {
-                console.error('Fehler beim Erstellen der Sidebar-Links:', error);
+                console.error('Fehler beim Erstellen der Sidebar-Links für live Kanäle:', error);
             }
         }
 
@@ -140,8 +166,8 @@
             return match ? match[1] : '';
         }
 
-        // Lade die Sidebar-Links und Twitch-Embeds beim Laden der Seite
-        createSidebarLinks();
+        // Lade die Sidebar-Links für live Kanäle und Twitch-Embeds beim Laden der Seite
+        createSidebarLinksForLiveChannels();
     </script>
 </body>
 </html>
