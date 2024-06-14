@@ -53,5 +53,18 @@
             </iframe>
         </div>
     </div>
+
+    <script>
+        // Hier kannst du den Kanal dynamisch aus einer Datei laden oder festlegen
+        const channelName = "bps1016"; // Hier Beispielhaft festgelegt
+
+        // Update des Player Iframe src Attributs mit dem dynamisch geladenen Kanal
+        const playerIframe = document.querySelector('.player iframe');
+        playerIframe.src = `https://player.twitch.tv/?channel=${channelName}&parent=tritora.github.io&muted=true`;
+
+        // Optional: Update des Chat Iframe src Attributs basierend auf dem Kanal
+        const chatIframe = document.getElementById('twitch-chat-embed');
+        chatIframe.src = `https://www.twitch.tv/embed/${channelName}/chat?parent=tritora.github.io`;
+    </script>
 </body>
 </html>
