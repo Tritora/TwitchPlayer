@@ -12,34 +12,56 @@
             height: 100vh;
             overflow: hidden;
         }
+        .sidebar {
+            width: 200px;
+            background-color: #f0f0f0;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .sidebar a {
+            display: block;
+            margin-bottom: 8px;
+            text-decoration: none;
+            color: #333;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
         .container {
             display: flex;
             flex-grow: 1;
+            position: relative; /* Hinzugefügt, um die Sidebar und den Player/Chat im Container zu positionieren */
+        }
+        .player, .chat {
+            flex: 1;
+            position: absolute; /* Absolute Positionierung für den Player und Chat innerhalb des Containers */
+            top: 0;
+            bottom: 0;
         }
         .player {
-            flex: 1;
-            position: relative;
-        }
-        .player iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            left: 200px; /* Platz für die Sidebar */
+            right: 350px; /* Platz für den Chat */
         }
         .chat {
+            right: 0;
             width: 350px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
         }
-        .chat iframe {
-            flex-grow: 1;
+        .player iframe, .chat iframe {
             width: 100%;
+            height: 100%;
+            border: none;
         }
     </style>
 </head>
 <body>
+    <div class="sidebar" id="sidebar">
+        <!-- Hier werden die Links dynamisch hinzugefügt -->
+    </div>
+
     <div class="container">
         <div class="player">
             <iframe id="twitch-player-embed"
@@ -69,26 +91,43 @@
             }
         }
 
-        // Funktion zum Setzen der Player- und Chat-IFrame-Quellen basierend auf der Kanal-URL
-        async function setTwitchEmbeds() {
+        // Funktion zum Erstellen der Links in der Sidebar
+        async function createSidebarLinks() {
             try {
                 const urls = await loadChannelUrls();
+                const sidebar = document.getElementById('sidebar');
+
+                // Erstelle für jeden Kanal einen Link in der Sidebar
+                urls.forEach(url => {
+                    const channelName = extractChannelName(url);
+                    const link = document.createElement('a');
+                    link.textContent = channelName;
+                    link.href = '#';
+                    link.addEventListener('click', (event) => {
+                        event.preventDefault(); // Verhindert das Springen zur Ankerposition
+                        updateTwitchEmbeds(channelName);
+                    });
+                    sidebar.appendChild(link);
+                });
+
+                // Setze die erste URL als Standard, du kannst hier je nach Bedarf anpassen
                 if (urls.length > 0) {
-                    const playerIframe = document.getElementById('twitch-player-embed');
-                    const chatIframe = document.getElementById('twitch-chat-embed');
-                    
-                    // Setze die erste URL als Standard, du kannst hier je nach Bedarf anpassen
-                    const defaultUrl = urls[0];
-                    
-                    // Setze die URLs für den Player und den Chat
-                    playerIframe.src = `https://player.twitch.tv/?channel=${extractChannelName(defaultUrl)}&parent=tritora.github.io&muted=true`;
-                    chatIframe.src = `https://www.twitch.tv/embed/${extractChannelName(defaultUrl)}/chat?parent=tritora.github.io`;
-                } else {
-                    console.warn('Keine Kanal-URLs gefunden.');
+                    updateTwitchEmbeds(extractChannelName(urls[0]));
                 }
+
             } catch (error) {
-                console.error('Fehler beim Setzen der Twitch-Embeds:', error);
+                console.error('Fehler beim Erstellen der Sidebar-Links:', error);
             }
+        }
+
+        // Funktion zum Setzen der Player- und Chat-IFrame-Quellen basierend auf dem Kanalnamen
+        function updateTwitchEmbeds(channelName) {
+            const playerIframe = document.getElementById('twitch-player-embed');
+            const chatIframe = document.getElementById('twitch-chat-embed');
+            
+            // Setze die URLs für den Player und den Chat
+            playerIframe.src = `https://player.twitch.tv/?channel=${channelName}&parent=tritora.github.io&muted=true`;
+            chatIframe.src = `https://www.twitch.tv/embed/${channelName}/chat?parent=tritora.github.io`;
         }
 
         // Funktion zum Extrahieren des Kanalnamens aus der URL
@@ -98,8 +137,8 @@
             return match ? match[1] : '';
         }
 
-        // Lade die Twitch-Embeds beim Laden der Seite
-        setTwitchEmbeds();
+        // Lade die Sidebar-Links und Twitch-Embeds beim Laden der Seite
+        createSidebarLinks();
     </script>
 </body>
 </html>
