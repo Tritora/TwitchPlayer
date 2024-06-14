@@ -96,20 +96,34 @@
 
         // Funktion zum Abrufen des Stream-Status eines Kanals
         async function checkStreamStatus(channelName) {
-            try {
-                const response = await fetch(`https://api.twitch.tv/helix/streams?user_login=${channelName}`, {
-                    headers: {
-                        'Client-ID': '6oibtqptiouosp60jt4cub73tq3b5c', // Hier sollte dein Twitch Client-ID eingetragen werden
-                        'Authorization': '9o239zv4ktx5i1h4nqa9yzkhhd0z4g' // Hier sollte dein Twitch Access Token eingetragen werden
-                    }
-                });
-                const data = await response.json();
-                return data.data.length > 0; // True, wenn der Kanal live ist, sonst False
-            } catch (error) {
-                console.error('Error checking stream status:', error);
-                return false;
+    try {
+        const response = await fetch(`https://api.twitch.tv/helix/streams?user_login=${channelName}`, {
+            headers: {
+                'Client-ID': '6oibtqptiouosp60jt4cub73tq3b5c'
             }
+        });
+        const data = await response.json();
+        return data.data.length > 0; // True, wenn der Kanal live ist, sonst False
+    } catch (error) {
+        console.error('Fehler beim Überprüfen des Stream-Status:', error);
+        return false;
+    }
+}
+
+// Beispiel Verwendung von checkStreamStatus
+const channelName = 'bps1016'; // Beispiel-Kanalname
+checkStreamStatus(channelName)
+    .then(isLive => {
+        if (isLive) {
+            console.log(`Der Kanal ${channelName} ist live!`);
+        } else {
+            console.log(`Der Kanal ${channelName} ist nicht live.`);
         }
+    })
+    .catch(error => {
+        console.error('Fehler beim Überprüfen des Stream-Status:', error);
+    });
+
 
         // Funktion zum Erstellen der Links in der Sidebar für live Kanäle
         async function createSidebarLinksForLiveChannels() {
