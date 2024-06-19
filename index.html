@@ -1,164 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Embed</title>
+    <title>Twitch Multistream</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
             display: flex;
-            height: 100vh;
-            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
         }
-        .sidebar {
-            width: 200px;
-            background-color: #f0f0f0;
-            padding: 10px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            flex-shrink: 0; /* Sidebar wird nicht verkleinert */
-            height: 100vh; /* Füllt die gesamte Höhe des Viewports aus */
+        .streams-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+            height: 80vh;
         }
-        .sidebar a {
-            display: block;
-            margin-bottom: 8px;
-            text-decoration: none;
-            color: #333;
-            padding: 6px 12px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .sidebar a:hover {
-            background-color: #ddd;
-        }
-        .container {
-            display: flex;
-            flex-grow: 1;
-            position: relative; /* Hinzugefügt, um die Sidebar und den Player/Chat im Container zu positionieren */
-        }
-        .player {
-            flex: 1; /* Füllt den verfügbaren Platz aus */
-            position: relative; /* Relative Positionierung für den Player */
-        }
-        .player iframe {
+        .stream {
             width: 100%;
             height: 100%;
-            border: none;
         }
-        .chat {
-            width: 350px;
-            flex-shrink: 0; /* Chat wird nicht verkleinert */
-            height: 100vh; /* Füllt die gesamte Höhe des Viewports aus */
-            margin-left: 10px; /* Abstand zwischen Player und Chat */
-        }
-        .chat iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+        button {
+            margin: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
-        <!-- Hier werden die Links dynamisch hinzugefügt -->
-    </div>
+    <button onclick="setStream(1)">Stream 1 setzen</button>
+    <button onclick="setStream(2)">Stream 2 setzen</button>
+    <button onclick="setStream(3)">Stream 3 setzen</button>
+    <button onclick="setStream(4)">Stream 4 setzen</button>
 
-    <div class="container">
-        <div class="player">
-            <iframe id="twitch-player-embed"
-                    src=""
-                    allowfullscreen>
-            </iframe>
-        </div>
-        <div class="chat">
-            <iframe id="twitch-chat-embed"
-                    src=""
-                    allowfullscreen>
-            </iframe>
-        </div>
+    <div class="streams-container">
+        <div id="stream1" class="stream"></div>
+        <div id="stream2" class="stream"></div>
+        <div id="stream3" class="stream"></div>
+        <div id="stream4" class="stream"></div>
     </div>
 
     <script>
-   // Funktion zum Laden der Twitch-Channel-URLs aus der Textdatei
-async function loadChannelUrls() {
-    try {
-        const response = await fetch('streams.txt'); // Annahme: Datei befindet sich im selben Verzeichnis
-        const text = await response.text();
-        const urls = text.trim().split('\n');
-        return urls.map(url => url.trim());
-    } catch (error) {
-        console.error('Fehler beim Laden der Kanal-URLs:', error);
-        return [];
-    }
-}
-
-// Funktion zum Abrufen des Stream-Status eines Kanals
-async function checkStreamStatus(channelName) {
-    try {
-        const response = await fetch(`https://api.twitch.tv/helix/streams?user_login=${channelName}`, {
-            headers: {
-                'Client-ID': '6oibtqptiouosp60jt4cub73tq3b5c' // Hier Ihre Twitch Client-ID eintragen
-            }
-        });
-        const data = await response.json();
-        console.log('Stream Status Response:', data); // Debug: Konsolenausgabe der API-Antwort
-        return data.data.length > 0; // True, wenn der Kanal live ist, sonst False
-    } catch (error) {
-        console.error('Fehler beim Überprüfen des Stream-Status:', error);
-        return false;
-    }
-}
-
-// Funktion zum Erstellen der Links in der Sidebar für live Kanäle
-async function createSidebarLinksForLiveChannels() {
-    try {
-        const urls = await loadChannelUrls();
-        const sidebar = document.getElementById('sidebar');
-
-        // Durchlaufe alle URLs und überprüfe den Stream-Status
-        for (const url of urls) {
-            const channelName = extractChannelName(url);
-            const isLive = await checkStreamStatus(channelName);
-
-            if (isLive) {
-                const link = document.createElement('a');
-                link.textContent = channelName;
-                link.href = '#';
-                link.addEventListener('click', (event) => {
-                    event.preventDefault(); // Verhindert das Springen zur Ankerposition
-                    updateTwitchEmbeds(channelName);
-                });
-                sidebar.appendChild(link);
+        function setStream(number) {
+            const url = prompt("Bitte geben Sie den Twitch-Stream-Link ein:");
+            if (url) {
+                const streamId = `stream${number}`;
+                const streamContainer = document.getElementById(streamId);
+                streamContainer.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${getChannelName(url)}&parent=${location.hostname}" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>`;
             }
         }
 
-    } catch (error) {
-        console.error('Fehler beim Erstellen der Sidebar-Links für live Kanäle:', error);
-    }
-}
-
-// Funktion zum Setzen der Player- und Chat-IFrame-Quellen basierend auf dem Kanalnamen
-function updateTwitchEmbeds(channelName) {
-    const playerIframe = document.getElementById('twitch-player-embed');
-    const chatIframe = document.getElementById('twitch-chat-embed');
-    
-    // Setze die URLs für den Player und den Chat
-    playerIframe.src = `https://player.twitch.tv/?channel=${channelName}&parent=tritora.github.io&muted=true`;
-    chatIframe.src = `https://www.twitch.tv/embed/${channelName}/chat?parent=tritora.github.io`;
-}
-
-// Funktion zum Extrahieren des Kanalnamens aus der URL
-function extractChannelName(url) {
-    const regex = /https:\/\/www.twitch.tv\/(.*)/;
-    const match = url.match(regex);
-    return match ? match[1] : '';
-}
-
-// Lade die Sidebar-Links für live Kanäle und Twitch-Embeds beim Laden der Seite
-createSidebarLinksForLiveChannels();
-
+        function getChannelName(url) {
+            const parts = url.split('/');
+            return parts[parts.length - 1] || parts[parts.length - 2];
+        }
     </script>
 </body>
 </html>
