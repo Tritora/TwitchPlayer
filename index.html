@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Multistream</title>
+    <title>Twitch und YouTube Multistream</title>
     <style>
         body {
             margin: 0;
@@ -28,6 +28,11 @@
             left: 50%;
             transform: translateX(-50%);
         }
+        .youtube-button-container {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
         button {
             padding: 10px;
             background-color: #9147ff;
@@ -47,11 +52,17 @@
         <div class="button-container">
             <button onclick="setStream(1)">Stream</button>
         </div>
+        <div class="youtube-button-container">
+            <button onclick="setYouTube(1)">YouTube</button>
+        </div>
     </div>
     <div class="stream-container">
         <div id="stream2" class="stream"></div>
         <div class="button-container">
             <button onclick="setStream(2)">Stream</button>
+        </div>
+        <div class="youtube-button-container">
+            <button onclick="setYouTube(2)">YouTube</button>
         </div>
     </div>
     <div class="stream-container">
@@ -59,11 +70,17 @@
         <div class="button-container">
             <button onclick="setStream(3)">Stream</button>
         </div>
+        <div class="youtube-button-container">
+            <button onclick="setYouTube(3)">YouTube</button>
+        </div>
     </div>
     <div class="stream-container">
         <div id="stream4" class="stream"></div>
         <div class="button-container">
             <button onclick="setStream(4)">Stream</button>
+        </div>
+        <div class="youtube-button-container">
+            <button onclick="setYouTube(4)">YouTube</button>
         </div>
     </div>
 
@@ -77,9 +94,23 @@
             }
         }
 
+        function setYouTube(number) {
+            const url = prompt("Bitte geben Sie den YouTube-Link ein:");
+            if (url) {
+                const streamId = `stream${number}`;
+                const streamContainer = document.getElementById(streamId);
+                streamContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${getYouTubeID(url)}" frameborder="0" allowfullscreen="true" class="stream"></iframe>`;
+            }
+        }
+
         function getChannelName(url) {
             const parts = url.split('/');
             return parts[parts.length - 1] || parts[parts.length - 2];
+        }
+
+        function getYouTubeID(url) {
+            const urlObj = new URL(url);
+            return urlObj.searchParams.get("v") || urlObj.pathname.split('/').pop();
         }
     </script>
 </body>
