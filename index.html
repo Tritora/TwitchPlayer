@@ -32,14 +32,22 @@
         }
         button {
             padding: 10px;
-            background-color: #9147ff;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
-        button:hover {
+        button.twitch {
+            background-color: #9147ff;
+        }
+        button.twitch:hover {
             background-color: #772ce8;
+        }
+        button.youtube {
+            background-color: #FF0000;
+        }
+        button.youtube:hover {
+            background-color: #CC0000;
         }
     </style>
 </head>
@@ -47,29 +55,29 @@
     <div class="stream-container">
         <div id="stream1" class="stream"></div>
         <div class="button-container">
-            <button onclick="setStream(1)">Stream</button>
-            <button onclick="setYouTube(1)">YouTube</button>
+            <button class="twitch" onclick="setStream(1)">Stream</button>
+            <button class="youtube" onclick="setYouTube(1)">YouTube</button>
         </div>
     </div>
     <div class="stream-container">
         <div id="stream2" class="stream"></div>
         <div class="button-container">
-            <button onclick="setStream(2)">Stream</button>
-            <button onclick="setYouTube(2)">YouTube</button>
+            <button class="twitch" onclick="setStream(2)">Stream</button>
+            <button class="youtube" onclick="setYouTube(2)">YouTube</button>
         </div>
     </div>
     <div class="stream-container">
         <div id="stream3" class="stream"></div>
         <div class="button-container">
-            <button onclick="setStream(3)">Stream</button>
-            <button onclick="setYouTube(3)">YouTube</button>
+            <button class="twitch" onclick="setStream(3)">Stream</button>
+            <button class="youtube" onclick="setYouTube(3)">YouTube</button>
         </div>
     </div>
     <div class="stream-container">
         <div id="stream4" class="stream"></div>
         <div class="button-container">
-            <button onclick="setStream(4)">Stream</button>
-            <button onclick="setYouTube(4)">YouTube</button>
+            <button class="twitch" onclick="setStream(4)">Stream</button>
+            <button class="youtube" onclick="setYouTube(4)">YouTube</button>
         </div>
     </div>
 
