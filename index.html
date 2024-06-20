@@ -24,11 +24,15 @@
         }
         .button-container {
             position: absolute;
-            bottom: 0px; /* Adjusted to move buttons to the bottom of the screen */
+            bottom: 0px; /* Buttons am unteren Rand */
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 10px;
+            visibility: hidden; /* Standardmäßig unsichtbar */
+        }
+        .stream-container:hover .button-container {
+            visibility: visible; /* Sichtbar beim Hovern über den Container */
         }
         button {
             padding: 10px;
@@ -50,10 +54,10 @@
             background-color: #CC0000;
         }
         button.kick {
-            background-color: #32CD32; /* LimeGreen color for Kick */
+            background-color: #32CD32; /* LimeGreen Farbe für Kick */
         }
         button.kick:hover {
-            background-color: #228B22; /* ForestGreen color for Kick */
+            background-color: #228B22; /* ForestGreen Farbe für Kick */
         }
     </style>
 </head>
