@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch und YouTube Multistream</title>
+    <title>Twitch, YouTube und Kick Multistream</title>
     <style>
         body {
             margin: 0;
@@ -49,54 +49,61 @@
         button.youtube:hover {
             background-color: #CC0000;
         }
+        button.kick {
+            background-color: #32CD32; /* LimeGreen color for Kick */
+        }
+        button.kick:hover {
+            background-color: #228B22; /* ForestGreen color for Kick */
+        }
     </style>
 </head>
 <body>
     <div class="stream-container">
         <div id="stream1" class="stream"></div>
         <div class="button-container">
-            <button class="twitch" onclick="setStream(1)">Twitch</button>
-            <button class="youtube" onclick="setYouTube(1)">YouTube</button>
+            <button class="twitch" onclick="setStream(1, 'twitch')">Twitch</button>
+            <button class="youtube" onclick="setStream(1, 'youtube')">YouTube</button>
+            <button class="kick" onclick="setStream(1, 'kick')">Kick</button>
         </div>
     </div>
     <div class="stream-container">
         <div id="stream2" class="stream"></div>
         <div class="button-container">
-            <button class="twitch" onclick="setStream(2)">Twitch</button>
-            <button class="youtube" onclick="setYouTube(2)">YouTube</button>
+            <button class="twitch" onclick="setStream(2, 'twitch')">Twitch</button>
+            <button class="youtube" onclick="setStream(2, 'youtube')">YouTube</button>
+            <button class="kick" onclick="setStream(2, 'kick')">Kick</button>
         </div>
     </div>
     <div class="stream-container">
         <div id="stream3" class="stream"></div>
         <div class="button-container">
-            <button class="twitch" onclick="setStream(3)">Twitch</button>
-            <button class="youtube" onclick="setYouTube(3)">YouTube</button>
+            <button class="twitch" onclick="setStream(3, 'twitch')">Twitch</button>
+            <button class="youtube" onclick="setStream(3, 'youtube')">YouTube</button>
+            <button class="kick" onclick="setStream(3, 'kick')">Kick</button>
         </div>
     </div>
     <div class="stream-container">
         <div id="stream4" class="stream"></div>
         <div class="button-container">
-            <button class="twitch" onclick="setStream(4)">Twitch</button>
-            <button class="youtube" onclick="setYouTube(4)">YouTube</button>
+            <button class="twitch" onclick="setStream(4, 'twitch')">Twitch</button>
+            <button class="youtube" onclick="setStream(4, 'youtube')">YouTube</button>
+            <button class="kick" onclick="setStream(4, 'kick')">Kick</button>
         </div>
     </div>
 
     <script>
-        function setStream(number) {
-            const url = prompt("Bitte geben Sie den Twitch-Stream-Link ein:");
+        function setStream(number, platform) {
+            const url = prompt(`Bitte geben Sie den ${platform.charAt(0).toUpperCase() + platform.slice(1)}-Stream-Link ein:`);
             if (url) {
                 const streamId = `stream${number}`;
                 const streamContainer = document.getElementById(streamId);
-                streamContainer.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${getChannelName(url)}&parent=${location.hostname}" frameborder="0" allowfullscreen="true" scrolling="no" class="stream"></iframe>`;
-            }
-        }
-
-        function setYouTube(number) {
-            const url = prompt("Bitte geben Sie den YouTube-Link ein:");
-            if (url) {
-                const streamId = `stream${number}`;
-                const streamContainer = document.getElementById(streamId);
-                streamContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${getYouTubeID(url)}" frameborder="0" allowfullscreen="true" class="stream"></iframe>`;
+                if (platform === 'twitch') {
+                    streamContainer.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${getChannelName(url)}&parent=${location.hostname}" frameborder="0" allowfullscreen="true" scrolling="no" class="stream"></iframe>`;
+                } else if (platform === 'youtube') {
+                    streamContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${getYouTubeID(url)}" frameborder="0" allowfullscreen="true" class="stream"></iframe>`;
+                } else if (platform === 'kick') {
+                    streamContainer.innerHTML = `<iframe src="https://player.kick.com/${getChannelName(url)}" frameborder="0" allowfullscreen="true" scrolling="no" class="stream"></iframe>`;
+                }
             }
         }
 
