@@ -17,13 +17,33 @@
             top: 10px;
             z-index: 1000;
         }
-        #add-stream-button {
+        #dropdown-button {
             padding: 10px;
             background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
             font-size: 14px;
+            border-radius: 5px;
+        }
+        #dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 40px;
+            background-color: white;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 5px;
+        }
+        #dropdown-menu a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        #dropdown-menu a:hover {
+            background-color: #ddd;
         }
         #streams-container {
             display: flex;
@@ -42,25 +62,37 @@
 </head>
 <body>
     <div id="button-container">
-        <button id="add-stream-button">Stream hinzufügen</button>
+        <button id="dropdown-button">Stream hinzufügen</button>
+        <div id="dropdown-menu">
+            <a href="#" onclick="showPrompt('twitch')">Twitch</a>
+            <a href="#" onclick="showPrompt('youtube')">YouTube</a>
+            <a href="#" onclick="showPrompt('kick')">Kick</a>
+        </div>
     </div>
     <div id="streams-container"></div>
 
     <script>
-        document.getElementById('add-stream-button').addEventListener('click', function() {
-            const platform = prompt("Bitte wählen Sie die Plattform (twitch/youtube/kick):").toLowerCase();
-            const validPlatforms = ['twitch', 'youtube', 'kick'];
-
-        
-
-            const url = prompt(`Bitte geben Sie den ${capitalize(platform)}-Stream-Link ein:`);
-            if (!url) {
-                alert("Ungültiger Link!");
-                return;
-            }
-
-            addStream(platform, url);
+        document.getElementById('dropdown-button').addEventListener('click', function() {
+            const menu = document.getElementById('dropdown-menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
         });
+
+        window.onclick = function(event) {
+            if (!event.target.matches('#dropdown-button')) {
+                const menu = document.getElementById('dropdown-menu');
+                if (menu.style.display === 'block') {
+                    menu.style.display = 'none';
+                }
+            }
+        };
+
+        function showPrompt(platform) {
+            const url = prompt(`Bitte geben Sie den ${capitalize(platform)}-Stream-Link ein:`);
+            if (url) {
+                addStream(platform, url);
+                document.getElementById('dropdown-menu').style.display = 'none';
+            }
+        }
 
         function addStream(platform, url) {
             const container = document.getElementById('streams-container');
