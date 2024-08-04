@@ -47,18 +47,28 @@
         }
         #streams-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            grid-auto-rows: 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-auto-rows: calc(300px * 9 / 16); /* Maintain 16:9 aspect ratio */
             gap: 0;
             width: 100%;
             height: 100vh;
             box-sizing: border-box;
         }
-        .stream {
+        .stream-container {
+            position: relative;
             width: 100%;
             height: 100%;
+            overflow: hidden;
         }
-        .stream iframe {
+        .stream-container::before {
+            content: "";
+            display: block;
+            padding-top: 56.25%; /* 16:9 aspect ratio */
+        }
+        .stream-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             border: none;
@@ -127,18 +137,16 @@
             }
 
             // Add new stream
+            const streamContainer = document.createElement('div');
+            streamContainer.className = 'stream-container';
+            
             const iframe = document.createElement('iframe');
             iframe.src = streamUrl;
-            iframe.className = 'stream';
             iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
             iframe.allowFullscreen = true;
-            container.appendChild(iframe);
-
-            resizeStreams();
-        }
-
-        function resizeStreams() {
-            // The CSS Grid layout handles the resizing of streams automatically
+            
+            streamContainer.appendChild(iframe);
+            container.appendChild(streamContainer);
         }
 
         function getTwitchChannel(url) {
