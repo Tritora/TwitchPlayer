@@ -49,12 +49,14 @@
     <script>
         document.getElementById('add-stream-button').addEventListener('click', function() {
             const platform = prompt("Bitte wählen Sie die Plattform (twitch/youtube/kick):").toLowerCase();
-            if (platform !== 'twitch' && platform !== 'youtube' && platform !== 'kick') {
+            const validPlatforms = ['twitch', 'youtube', 'kick'];
+
+            if (!validPlatforms.includes(platform)) {
                 alert("Ungültige Plattform!");
                 return;
             }
 
-            const url = prompt(`Bitte geben Sie den ${platform.charAt(0).toUpperCase() + platform.slice(1)}-Stream-Link ein:`);
+            const url = prompt(`Bitte geben Sie den ${capitalize(platform)}-Stream-Link ein:`);
             if (!url) {
                 alert("Ungültiger Link!");
                 return;
@@ -70,13 +72,25 @@
 
             let streamUrl;
             if (platform === 'twitch') {
-                const channel = getChannelName(url);
+                const channel = getTwitchChannel(url);
+                if (!channel) {
+                    alert("Ungültige Twitch-URL!");
+                    return;
+                }
                 streamUrl = `https://player.twitch.tv/?channel=${channel}&parent=${location.hostname}`;
             } else if (platform === 'youtube') {
                 const videoId = getYouTubeID(url);
+                if (!videoId) {
+                    alert("Ungültige YouTube-URL!");
+                    return;
+                }
                 streamUrl = `https://www.youtube.com/embed/${videoId}`;
             } else if (platform === 'kick') {
-                const channel = getChannelName(url);
+                const channel = getKickChannel(url);
+                if (!channel) {
+                    alert("Ungültige Kick-URL!");
+                    return;
+                }
                 streamUrl = `https://player.kick.com/${channel}`;
             }
 
@@ -93,14 +107,27 @@
             container.appendChild(iframe);
         }
 
-        function getChannelName(url) {
-            const parts = url.split('/');
-            return parts[parts.length - 1] || parts[parts.length - 2];
+        function getTwitchChannel(url) {
+            const match = url.match(/twitch\.tv\/([^\/]+)/);
+            return match ? match[1] : null;
+        }
+
+        function getKickChannel(url) {
+            const match = url.match(/kick\.com\/([^\/]+)/);
+            return match ? match[1] : null;
         }
 
         function getYouTubeID(url) {
-            const urlObj = new URL(url);
-            return urlObj.searchParams.get("v") || urlObj.pathname.split('/').pop();
+            try {
+                const urlObj = new URL(url);
+                return urlObj.searchParams.get("v") || urlObj.pathname.split('/').pop();
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
         }
     </script>
 </body>
