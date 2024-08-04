@@ -49,7 +49,7 @@
     <script>
         document.getElementById('add-stream-button').addEventListener('click', function() {
             const platform = prompt("Bitte wählen Sie die Plattform (twitch/youtube/kick):").toLowerCase();
-            if (!['twitch', 'youtube', 'kick'].includes(platform)) {
+            if (platform !== 'twitch' && platform !== 'youtube' && platform !== 'kick') {
                 alert("Ungültige Plattform!");
                 return;
             }
