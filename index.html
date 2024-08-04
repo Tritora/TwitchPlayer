@@ -113,6 +113,8 @@
             const iframe = document.createElement('iframe');
             iframe.src = streamUrl;
             iframe.className = 'stream';
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+            iframe.allowFullscreen = true;
             container.appendChild(iframe);
         }
     </script>
