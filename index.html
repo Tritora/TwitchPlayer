@@ -51,10 +51,7 @@
             const platform = prompt("Bitte wählen Sie die Plattform (twitch/youtube/kick):").toLowerCase();
             const validPlatforms = ['twitch', 'youtube', 'kick'];
 
-            if (!validPlatforms.includes(platform)) {
-                alert("Ungültige Plattform!");
-                return;
-            }
+        
 
             const url = prompt(`Bitte geben Sie den ${capitalize(platform)}-Stream-Link ein:`);
             if (!url) {
