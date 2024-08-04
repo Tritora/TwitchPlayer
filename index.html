@@ -56,19 +56,20 @@
             
             let streamUrl;
             if (type === 'twitch') {
-                streamUrl = prompt("Geben Sie die URL des Twitch-Streams ein:");
-                streamUrl = streamUrl.replace("twitch.tv", "player.twitch.tv/?channel");
+                let channel = prompt("Geben Sie den Kanalnamen des Twitch-Streams ein:");
+                if (!channel) return;
+                streamUrl = `https://player.twitch.tv/?channel=${channel}&parent=${window.location.hostname}`;
             } else if (type === 'youtube') {
-                streamUrl = prompt("Geben Sie die URL des YouTube-Streams ein:");
-                const videoId = streamUrl.split('v=')[1].split('&')[0];
+                let url = prompt("Geben Sie die URL des YouTube-Streams ein:");
+                if (!url) return;
+                const videoId = new URL(url).searchParams.get('v');
+                if (!videoId) return;
                 streamUrl = `https://www.youtube.com/embed/${videoId}`;
             } else if (type === 'kick') {
-                streamUrl = prompt("Geben Sie die URL des Kick-Streams ein:");
-                // Add the correct embedding format for Kick streams
-                streamUrl = `https://kick.com/embed/${streamUrl.split('/').pop()}`;
+                let channel = prompt("Geben Sie den Kanalnamen des Kick-Streams ein:");
+                if (!channel) return;
+                streamUrl = `https://player.kick.com/${channel}`;
             }
-            
-            if (!streamUrl) return;
             
             streams.forEach(stream => {
                 stream.style.width = (100 / streamCount) + '%';
