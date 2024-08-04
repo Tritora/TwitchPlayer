@@ -3,122 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch, YouTube und Kick Multistream</title>
+    <title>Stream Manager</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
             margin: 0;
+            padding: 0;
             overflow: hidden;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            height: 100vh;
         }
-        .stream-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
+        #button-container {
+            position: fixed;
+            right: 10px;
+            top: 10px;
+            z-index: 1000;
         }
-        .stream {
-            width: 100%;
-            height: 100%;
-        }
-        .button-container {
-            position: absolute;
-            bottom: 0px; /* Buttons am unteren Rand */
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            visibility: hidden; /* Standardmäßig unsichtbar */
-        }
-        .stream-container:hover .button-container {
-            visibility: visible; /* Sichtbar beim Hovern über den Container */
-        }
-        button {
+        #button-container button {
+            display: block;
+            margin-bottom: 10px;
             padding: 10px;
+            background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
         }
-        button.twitch {
-            background-color: #9147ff;
+        #streams-container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            height: 100vh;
         }
-        button.twitch:hover {
-            background-color: #772ce8;
-        }
-        button.youtube {
-            background-color: #FF0000;
-        }
-        button.youtube:hover {
-            background-color: #CC0000;
-        }
-        button.kick {
-            background-color: #32CD32; /* LimeGreen Farbe für Kick */
-        }
-        button.kick:hover {
-            background-color: #228B22; /* ForestGreen Farbe für Kick */
+        .stream {
+            flex: 1 1 auto;
+            height: 100%;
+            width: 100%;
+            border: none;
         }
     </style>
 </head>
 <body>
-    <div class="stream-container">
-        <div id="stream1" class="stream"></div>
-        <div class="button-container">
-            <button class="twitch" onclick="setStream(1, 'twitch')">Twitch</button>
-            <button class="youtube" onclick="setStream(1, 'youtube')">YouTube</button>
-            <button class="kick" onclick="setStream(1, 'kick')">Kick</button>
-        </div>
+    <div id="button-container">
+        <button onclick="addStream('twitch')">Twitch Stream hinzufügen</button>
+        <button onclick="addStream('youtube')">YouTube Stream hinzufügen</button>
+        <button onclick="addStream('kick')">Kick Stream hinzufügen</button>
     </div>
-    <div class="stream-container">
-        <div id="stream2" class="stream"></div>
-        <div class="button-container">
-            <button class="twitch" onclick="setStream(2, 'twitch')">Twitch</button>
-            <button class="youtube" onclick="setStream(2, 'youtube')">YouTube</button>
-            <button class="kick" onclick="setStream(2, 'kick')">Kick</button>
-        </div>
-    </div>
-    <div class="stream-container">
-        <div id="stream3" class="stream"></div>
-        <div class="button-container">
-            <button class="twitch" onclick="setStream(3, 'twitch')">Twitch</button>
-            <button class="youtube" onclick="setStream(3, 'youtube')">YouTube</button>
-            <button class="kick" onclick="setStream(3, 'kick')">Kick</button>
-        </div>
-    </div>
-    <div class="stream-container">
-        <div id="stream4" class="stream"></div>
-        <div class="button-container">
-            <button class="twitch" onclick="setStream(4, 'twitch')">Twitch</button>
-            <button class="youtube" onclick="setStream(4, 'youtube')">YouTube</button>
-            <button class="kick" onclick="setStream(4, 'kick')">Kick</button>
-        </div>
-    </div>
-
+    <div id="streams-container"></div>
+    
     <script>
-        function setStream(number, platform) {
-            const url = prompt(`Bitte geben Sie den ${platform.charAt(0).toUpperCase() + platform.slice(1)}-Stream-Link ein:`);
-            if (url) {
-                const streamId = `stream${number}`;
-                const streamContainer = document.getElementById(streamId);
-                if (platform === 'twitch') {
-                    streamContainer.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${getChannelName(url)}&parent=${location.hostname}" frameborder="0" allowfullscreen="true" scrolling="no" class="stream"></iframe>`;
-                } else if (platform === 'youtube') {
-                    streamContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${getYouTubeID(url)}" frameborder="0" allowfullscreen="true" class="stream"></iframe>`;
-                } else if (platform === 'kick') {
-                    streamContainer.innerHTML = `<iframe src="https://player.kick.com/${getChannelName(url)}" frameborder="0" allowfullscreen="true" scrolling="no" class="stream"></iframe>`;
-                }
+        function addStream(type) {
+            const container = document.getElementById('streams-container');
+            const streams = container.querySelectorAll('.stream');
+            const streamCount = streams.length + 1;
+            
+            let streamUrl;
+            if (type === 'twitch') {
+                streamUrl = prompt("Geben Sie die URL des Twitch-Streams ein:");
+                streamUrl = streamUrl.replace("twitch.tv", "player.twitch.tv/?channel");
+            } else if (type === 'youtube') {
+                streamUrl = prompt("Geben Sie die URL des YouTube-Streams ein:");
+                const videoId = streamUrl.split('v=')[1].split('&')[0];
+                streamUrl = `https://www.youtube.com/embed/${videoId}`;
+            } else if (type === 'kick') {
+                streamUrl = prompt("Geben Sie die URL des Kick-Streams ein:");
+                // Add the correct embedding format for Kick streams
+                streamUrl = `https://kick.com/embed/${streamUrl.split('/').pop()}`;
             }
-        }
-
-        function getChannelName(url) {
-            const parts = url.split('/');
-            return parts[parts.length - 1] || parts[parts.length - 2];
-        }
-
-        function getYouTubeID(url) {
-            const urlObj = new URL(url);
-            return urlObj.searchParams.get("v") || urlObj.pathname.split('/').pop();
+            
+            if (!streamUrl) return;
+            
+            streams.forEach(stream => {
+                stream.style.width = (100 / streamCount) + '%';
+                stream.style.height = '100%';
+            });
+            
+            const iframe = document.createElement('iframe');
+            iframe.src = streamUrl;
+            iframe.className = 'stream';
+            container.appendChild(iframe);
         }
     </script>
 </body>
