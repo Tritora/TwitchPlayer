@@ -123,17 +123,27 @@
                 streamUrl = `https://player.kick.com/${channel}`;
             }
 
-            streams.forEach(stream => {
-                stream.style.width = (100 / streamCount) + '%';
-                stream.style.height = '100%';
-            });
-
+            // Add new stream
             const iframe = document.createElement('iframe');
             iframe.src = streamUrl;
             iframe.className = 'stream';
             iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
             iframe.allowFullscreen = true;
             container.appendChild(iframe);
+
+            // Resize existing streams
+            resizeStreams();
+        }
+
+        function resizeStreams() {
+            const container = document.getElementById('streams-container');
+            const streams = container.querySelectorAll('.stream');
+            const streamCount = streams.length;
+
+            streams.forEach(stream => {
+                stream.style.width = (100 / streamCount) + '%';
+                stream.style.height = '100%';
+            });
         }
 
         function getTwitchChannel(url) {
