@@ -3,173 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Manager</title>
+    <title>Twitch, YouTube und Kick Multistream</title>
     <style>
         body {
             margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
             overflow: hidden;
-        }
-        #button-container {
-            position: fixed;
-            right: 10px;
-            top: 10px;
-            z-index: 1000;
-        }
-        #dropdown-button {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            border-radius: 5px;
-        }
-        #dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 40px;
-            background-color: white;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            z-index: 1000;
-            border-radius: 5px;
-        }
-        #dropdown-menu a {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-        #dropdown-menu a:hover {
-            background-color: #ddd;
-        }
-        #streams-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            grid-auto-rows: calc(300px * 9 / 16); /* Maintain 16:9 aspect ratio */
-            gap: 0;
-            width: 100%;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
             height: 100vh;
-            box-sizing: border-box;
         }
         .stream-container {
             position: relative;
             width: 100%;
             height: 100%;
-            overflow: hidden;
         }
-        .stream-container::before {
-            content: "";
-            display: block;
-            padding-top: 56.25%; /* 16:9 aspect ratio */
-        }
-        .stream-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .stream {
             width: 100%;
             height: 100%;
+        }
+        .button-container {
+            position: absolute;
+            bottom: 0px; /* Buttons am unteren Rand */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            visibility: hidden; /* Standardmäßig unsichtbar */
+        }
+        .stream-container:hover .button-container {
+            visibility: visible; /* Sichtbar beim Hovern über den Container */
+        }
+        button {
+            padding: 10px;
+            color: white;
             border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button.twitch {
+            background-color: #9147ff;
+        }
+        button.twitch:hover {
+            background-color: #772ce8;
+        }
+        button.youtube {
+            background-color: #FF0000;
+        }
+        button.youtube:hover {
+            background-color: #CC0000;
+        }
+        button.kick {
+            background-color: #32CD32; /* LimeGreen Farbe für Kick */
+        }
+        button.kick:hover {
+            background-color: #228B22; /* ForestGreen Farbe für Kick */
         }
     </style>
 </head>
 <body>
-    <div id="button-container">
-        <button id="dropdown-button">Stream hinzufügen</button>
-        <div id="dropdown-menu">
-            <a href="#" onclick="showPrompt('twitch')">Twitch</a>
-            <a href="#" onclick="showPrompt('youtube')">YouTube</a>
-            <a href="#" onclick="showPrompt('kick')">Kick</a>
+    <div class="stream-container">
+        <div id="stream1" class="stream"></div>
+        <div class="button-container">
+            <button class="twitch" onclick="setStream(1, 'twitch')">Twitch</button>
+            <button class="youtube" onclick="setStream(1, 'youtube')">YouTube</button>
+            <button class="kick" onclick="setStream(1, 'kick')">Kick</button>
         </div>
     </div>
-    <div id="streams-container"></div>
+    <div class="stream-container">
+        <div id="stream2" class="stream"></div>
+        <div class="button-container">
+            <button class="twitch" onclick="setStream(2, 'twitch')">Twitch</button>
+            <button class="youtube" onclick="setStream(2, 'youtube')">YouTube</button>
+            <button class="kick" onclick="setStream(2, 'kick')">Kick</button>
+        </div>
+    </div>
+    <div class="stream-container">
+        <div id="stream3" class="stream"></div>
+        <div class="button-container">
+            <button class="twitch" onclick="setStream(3, 'twitch')">Twitch</button>
+            <button class="youtube" onclick="setStream(3, 'youtube')">YouTube</button>
+            <button class="kick" onclick="setStream(3, 'kick')">Kick</button>
+        </div>
+    </div>
+    <div class="stream-container">
+        <div id="stream4" class="stream"></div>
+        <div class="button-container">
+            <button class="twitch" onclick="setStream(4, 'twitch')">Twitch</button>
+            <button class="youtube" onclick="setStream(4, 'youtube')">YouTube</button>
+            <button class="kick" onclick="setStream(4, 'kick')">Kick</button>
+        </div>
+    </div>
 
     <script>
-        document.getElementById('dropdown-button').addEventListener('click', function() {
-            const menu = document.getElementById('dropdown-menu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        });
-
-        window.onclick = function(event) {
-            if (!event.target.matches('#dropdown-button')) {
-                const menu = document.getElementById('dropdown-menu');
-                if (menu.style.display === 'block') {
-                    menu.style.display = 'none';
-                }
-            }
-        };
-
-        function showPrompt(platform) {
-            const url = prompt(`Bitte geben Sie den ${capitalize(platform)}-Stream-Link ein:`);
+        function setStream(number, platform) {
+            const url = prompt(`Bitte geben Sie den ${platform.charAt(0).toUpperCase() + platform.slice(1)}-Stream-Link ein:`);
             if (url) {
-                addStream(platform, url);
-                document.getElementById('dropdown-menu').style.display = 'none';
+                const streamId = `stream${number}`;
+                const streamContainer = document.getElementById(streamId);
+                if (platform === 'twitch') {
+                    streamContainer.innerHTML = `<iframe src="https://player.twitch.tv/?channel=${getChannelName(url)}&parent=${location.hostname}" frameborder="0" allowfullscreen="true" scrolling="no" class="stream"></iframe>`;
+                } else if (platform === 'youtube') {
+                    streamContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${getYouTubeID(url)}" frameborder="0" allowfullscreen="true" class="stream"></iframe>`;
+                } else if (platform === 'kick') {
+                    streamContainer.innerHTML = `<iframe src="https://player.kick.com/${getChannelName(url)}" frameborder="0" allowfullscreen="true" scrolling="no" class="stream"></iframe>`;
+                }
             }
         }
 
-        function addStream(platform, url) {
-            const container = document.getElementById('streams-container');
-
-            let streamUrl;
-            if (platform === 'twitch') {
-                const channel = getTwitchChannel(url);
-                if (!channel) {
-                    alert("Ungültige Twitch-URL!");
-                    return;
-                }
-                streamUrl = `https://player.twitch.tv/?channel=${channel}&parent=${location.hostname}`;
-            } else if (platform === 'youtube') {
-                const videoId = getYouTubeID(url);
-                if (!videoId) {
-                    alert("Ungültige YouTube-URL!");
-                    return;
-                }
-                streamUrl = `https://www.youtube.com/embed/${videoId}`;
-            } else if (platform === 'kick') {
-                const channel = getKickChannel(url);
-                if (!channel) {
-                    alert("Ungültige Kick-URL!");
-                    return;
-                }
-                streamUrl = `https://player.kick.com/${channel}`;
-            }
-
-            // Add new stream
-            const streamContainer = document.createElement('div');
-            streamContainer.className = 'stream-container';
-            
-            const iframe = document.createElement('iframe');
-            iframe.src = streamUrl;
-            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-            iframe.allowFullscreen = true;
-            
-            streamContainer.appendChild(iframe);
-            container.appendChild(streamContainer);
-        }
-
-        function getTwitchChannel(url) {
-            const match = url.match(/twitch\.tv\/([^\/]+)/);
-            return match ? match[1] : null;
-        }
-
-        function getKickChannel(url) {
-            const match = url.match(/kick\.com\/([^\/]+)/);
-            return match ? match[1] : null;
+        function getChannelName(url) {
+            const parts = url.split('/');
+            return parts[parts.length - 1] || parts[parts.length - 2];
         }
 
         function getYouTubeID(url) {
-            try {
-                const urlObj = new URL(url);
-                return urlObj.searchParams.get("v") || urlObj.pathname.split('/').pop();
-            } catch (e) {
-                return null;
-            }
-        }
-
-        function capitalize(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
+            const urlObj = new URL(url);
+            return urlObj.searchParams.get("v") || urlObj.pathname.split('/').pop();
         }
     </script>
 </body>
